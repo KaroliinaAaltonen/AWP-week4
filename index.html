@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Advanced Web Applications Week 4</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    </head>
+    <body>
+
+      <!--Navbar (materialize)-->
+      <div class="navbar-fixed">
+        <nav>
+          <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Most difficult way to display recipes maybe ever</a>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Container div with two columns -->
+      <div class="container">
+        <div class="col s6">
+          <!-- show recipe -->
+          <input type="text" id="name-text">
+          <h4>Ingredients</h4>
+          <textarea id="ingredients-text"></textarea>
+          <button id="add-ingredient" class="btn" type="button">Add ingredient</button>
+          <ul id="ingredients-list"></ul>
+          <h4>Instructions</h4>
+          <textarea id="instructions-text"></textarea>
+          <button id="add-instruction" class="btn" type="button">Add instruction</button>
+          <ul id="instructions-list"></ul>
+        </div>
+        <div class="col s6">
+          <!-- add recipe -->
+          <!-- image input -->
+          <input type="file" id="image-input" accept="image/*" multiple>
+          <button id="submit" class="btn" type="submit">Submit</button>
+        </div>
+      </div>
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          M.AutoInit(); // Initializing Materialize
+        });
+
+        document.getElementById('add-ingredient').addEventListener('click', function () {
+          const ingredientText = document.getElementById('ingredients-text').value;
+          const ingredientsList = document.getElementById('ingredients-list');
+          const listItem = document.createElement('li');
+          listItem.textContent = ingredientText;
+          ingredientsList.appendChild(listItem);
+          document.getElementById('ingredients-text').value = '';
+        });
+
+        document.getElementById('add-instruction').addEventListener('click', function () {
+          const instructionText = document.getElementById('instructions-text').value;
+          const instructionsList = document.getElementById('instructions-list');
+          const listItem = document.createElement('li');
+          listItem.textContent = instructionText;
+          instructionsList.appendChild(listItem);
+          document.getElementById('instructions-text').value = '';
+        });
+
+        document.getElementById('submit').addEventListener('click', function () {
+          const name = document.getElementById('name-text').value;
+          const ingredients = Array.from(document.getElementById('ingredients-list').children).map(li => li.textContent);
+          const instructions = Array.from(document.getElementById('instructions-list').children).map(li => li.textContent);
+
+          // Creating a JSON object to send to the server
+          const newRecipe = {
+            name,
+            ingredients,
+            instructions
+          };
+
+          // Sending a POST request to the server
+          fetch('/recipe/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newRecipe)
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('New Recipe:', data);
+            // Handle the response
+          });
+        });
+
+        document.getElementById('image-input').addEventListener('change', function (event) {
+          // Handle images
+          const selectedImages = event.target.files;
+          console.log('Selected Images:', selectedImages);
+        });
+      </script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    </body>
+    </html>
